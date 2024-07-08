@@ -1,4 +1,5 @@
 import Error from '@/components/error'
+import LinkCard from '@/components/link-card'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -73,8 +74,8 @@ const Dashboard = () => {
 
     </div>
     {error && <Error message={error?.message}/>}
-    {(filteredUrls||[]).map((url,id)=>{
-      return url.title;
+    {(filteredUrls||[]).map((url,i)=>{
+      return <LinkCard key={i} url={url} fetchUrls={fnUrls}/>
 
     })}
 </div>
