@@ -1,13 +1,30 @@
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { UrlState } from '@/context'
 import { getClicksForUrl } from '@/db/apiClicks'
 import { deleteUrl, getUrl } from '@/db/apiUrls'
 import useFetch from '@/hooks/use-fetch'
-import { LinkIcon } from 'lucide-react'
+import { Copy, Download, LinkIcon, Trash } from 'lucide-react'
 import React, { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BarLoader } from 'react-spinners'
+import { BarLoader, BeatLoader } from 'react-spinners'
 
 const Link = () => {
+
+  const downloadImage=()=>{
+    const imageUrl=url?.qr;
+    const fileName=url?.title; 
+
+    const anchor=document.createElement("a");
+    anchor.href=imageUrl;
+    anchor.download=fileName;
+
+    document.body.appendChild(anchor);
+
+    anchor.click();
+
+    document.body.removeChild(anchor);
+ }
 
   const {id}=useParams()
   const {user}=UrlState()
@@ -70,11 +87,68 @@ const Link = () => {
           {new Date(url?.created_at).toLocaleString()}
           </span>
 
+          <div className='flex gap-2'>
+            <Button variable="ghost" onClick={()=>
+                navigator.clipboard.writeText(`https://trimrr.in/${url?.short_url}`)
+            }
+            >
+                <Copy/>
+            </Button>
+            <Button variable="ghost" onClick={downloadImage}>
+                <Download/>
+            </Button>
+            <Button variable="ghost" onClick={()=>fnDelete()}>
+                {loadingDelete?<BeatLoader size={5} color='white'/>:<Trash/>}
+            </Button>
+            
+        </div>
+
+        <img
+          src={url?.qr}
+          className='w-full self-center sm:self-start ring ring-blue-500 p-1 object-contain'
+          alt='qr code'
+        />
+
 
       </div>
 
 
-      <div className='sm:w-3/5'></div>
+      
+      <Card className='sm:w-3/5'>
+  <CardHeader>
+    <CardTitle className="text-4xl font-extrabold">Stats</CardTitle>
+    
+  </CardHeader>
+  {stats && stats?.length?(
+    <CardContent className='flex flex-col gap-6'>
+      <Card>
+        <CardHeader>
+          <CardTitle>Total Clicks</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>{stats?.length}</p>
+        </CardContent>
+      </Card>
+
+    <CardTitle>Location Data</CardTitle>
+    {/* {<Location stats={stats}/>} */}
+
+
+    <CardTitle>Device Info</CardTitle>
+
+    {/* {<DeviceStats stats={stats}/>} */}
+
+  </CardContent>
+  ):(
+    <CardContent>
+      {loadingStats === false
+      ? "No Statistics Yet"
+      :"Loading Statistics.."}
+    </CardContent>
+  )}
+  
+</Card>
+
 
     </div>
 
