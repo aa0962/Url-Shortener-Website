@@ -1,5 +1,5 @@
 import { UrlState } from '@/context'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
     Dialog,
@@ -15,10 +15,16 @@ import {Button} from "@/components/ui/button";
 import { Card } from './ui/card'
 import Error from './error';
 import * as yup from 'yup'
+import useFetch from '@/hooks/use-fetch';
+import { QRCode } from 'react-qrcode-logo';
+
+
+
 const CreateLink =()=> {
     const {user}=UrlState()
 
     const navigate=useNavigate()
+    const ref=useRef()
 
     let [searchParams,setSearchParams]=useSearchParams()
     const longLink=searchParams.get("createNew");
@@ -38,12 +44,23 @@ const CreateLink =()=> {
             .url("Must be a valid URL")
             .required("Long URL is required"),
         customUrl:yup.string(),
-    })
+    });
+
+    const handleChange=(e)=>{
+      setFormValues({
+        ...formValues,
+        [e.target.id]:e.target.value,
+        })
+      }
+
+    useFetch()
 
 
   return (
-    <div>
-     <Dialog>
+    
+     <Dialog defaultOpen={longLink}
+     onOpenChange={(res)=> {if(!res) setSearchParams({});
+     }}>
   <DialogTrigger>
     <Button variant="destructive">Create New Link</Button>
 
@@ -54,13 +71,15 @@ const CreateLink =()=> {
      
     </DialogHeader>
 
-    <Input id='title' placeholder="short Link's Title"/>
+    {formValues?.longUrl && (<QRCode value={formValues?.longUrl} size={250} ref={ref}/>)}
+
+    <Input id='title' placeholder="short Link's Title" value={formValues.title} onChange={handleChange}/>
     <Error message={"some error"}/>
-    <Input id='title' placeholder="Enter your Looong URL"/>
+    <Input id='longUrl' placeholder="Enter your Looong URL" value={formValues.longUrl} onChange={handleChange}/>
     <Error message={"some error"}/>
     <div className='flex items-center gap-2'>
       <Card ClassName="p-2">trimrr.in</Card>/
-      <Input id='title' placeholder="Custom Link (optional)"/>
+      <Input id='customUrl' placeholder="Custom Link (optional)" value={formValues.customUrl} onChange={handleChange}/>
     </div>
     <Error message={"some error"}/>
     <DialogFooter className='sm:justify-start'>
@@ -71,7 +90,7 @@ const CreateLink =()=> {
 </Dialog>
 
 
-    </div>
+   
   )
 }
 
