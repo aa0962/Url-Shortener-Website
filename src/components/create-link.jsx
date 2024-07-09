@@ -1,26 +1,29 @@
 import { UrlState } from '@/context'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
+    
     DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
   } from "@/components/ui/dialog"
 import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+
 import { Card } from './ui/card'
 import Error from './error';
 import * as yup from 'yup'
 import useFetch from '@/hooks/use-fetch';
 import { QRCode } from 'react-qrcode-logo';
+import { createUrl } from '@/db/apiUrls';
+import { BeatLoader } from 'react-spinners';
+import { Button } from '@/components/ui/button';
 
 
 
-const CreateLink =()=> {
+export function CreateLink() {
     const {user}=UrlState()
 
     const navigate=useNavigate()
@@ -53,7 +56,41 @@ const CreateLink =()=> {
         })
       }
 
-    useFetch()
+      const {
+        loading,
+        error,
+        data,
+        fn:fnCreateUrl,
+      }=
+      useFetch(createUrl,{...formValues,user_id:user.id})
+
+      useEffect(()=>{
+        if(error === null && data){
+          navigate(`/link/${data[0].id}`)
+        }
+      },[error,data])
+
+  
+
+    const createNewLink=async()=>{
+      setErrors([]);
+      try{
+        await schema.validate(formValues,{aboutEarly:false})
+        const canvas=ref.current.canvasRef.current;
+        const blob=await new Promise((resolve)=>canvas.toBlob(resolve))
+
+        await fnCreateUrl(blob)
+
+      }catch(e){
+        const newErrors={};
+
+        e?.inner?.forEach((err)=>{
+          newErrors[err.path]=err.message
+        })
+        setErrors(newErrors)
+      }
+
+    }
 
 
   return (
@@ -65,25 +102,34 @@ const CreateLink =()=> {
     <Button variant="destructive">Create New Link</Button>
 
   </DialogTrigger>
-  <DialogContent ClassName="sm:max-w-md">
+  <DialogContent className="sm:max-w-md">
     <DialogHeader>
       <DialogTitle className='font-bold text-2xl'>Create New</DialogTitle>
      
     </DialogHeader>
 
-    {formValues?.longUrl && (<QRCode value={formValues?.longUrl} size={250} ref={ref}/>)}
+    {formValues?.longUrl && (<QRCode ref={ref} size={250} value={formValues?.longUrl}/>)}
 
     <Input id='title' placeholder="short Link's Title" value={formValues.title} onChange={handleChange}/>
-    <Error message={"some error"}/>
+    {errors.title && <Error message={errors.title}/>}
+
     <Input id='longUrl' placeholder="Enter your Looong URL" value={formValues.longUrl} onChange={handleChange}/>
-    <Error message={"some error"}/>
+    {errors.longUrl && <Error message={errors.longUrl}/>}
+
+
     <div className='flex items-center gap-2'>
-      <Card ClassName="p-2">trimrr.in</Card>/
-      <Input id='customUrl' placeholder="Custom Link (optional)" value={formValues.customUrl} onChange={handleChange}/>
+      <Card className="p-2">trimrr.in</Card>/
+      <Input id='customUrl' placeholder="Custom Link (optional)" 
+      value={formValues.customUrl} 
+      onChange={handleChange}
+      />
     </div>
-    <Error message={"some error"}/>
+    {error && <Error message={errors.message}/>}
+
     <DialogFooter className='sm:justify-start'>
-          <Button variant='destructive'>Create</Button>
+          <Button type="button" disabled={loading} onClick={createNewLink} variant='destructive'>
+            {loading?<BeatLoader size={10} color='white'/>:"Create"}
+            </Button>
         </DialogFooter>
 
   </DialogContent>

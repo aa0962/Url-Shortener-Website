@@ -1,7 +1,7 @@
 import CreateLink from '@/components/create-link'
 import Error from '@/components/error'
 import LinkCard from '@/components/link-card'
-import { Button } from '@/components/ui/button'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { UrlState } from '@/context'
