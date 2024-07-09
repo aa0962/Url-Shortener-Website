@@ -80,8 +80,7 @@ export async function getLongUrl(id)
 
 const parser=new UAParser();
 
-export const storeClicks=async({id,originalUrl}=>{
-    try{
+export const storeClicks=async({id,originalUrl}) => {  try{
         const res=parser.getResult();
         const device=res.type || "desktop";
 
@@ -100,4 +99,4 @@ export const storeClicks=async({id,originalUrl}=>{
         console.error("Error recording click:",error)
 
     }
-})
+}
