@@ -22,7 +22,7 @@
 import Header from '@/components/header';
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { FaLinkedin, FaInstagram, FaGithub } from 'react-icons/fa';
+import { FaLinkedin, FaGithub } from 'react-icons/fa';
 
 const AppLayout = () => {
   return (
@@ -38,9 +38,6 @@ const AppLayout = () => {
         <div className='flex justify-center gap-4 mt-4'>
           <a href="https://www.linkedin.com/in/aryan-hedaoo-93325b22b" target="_blank" rel="noopener noreferrer">
             <FaLinkedin className='text-white text-2xl hover:text-blue-500' />
-          </a>
-          <a href="https://www.instagram.com/_aryan_hedaoo_/" target="_blank" rel="noopener noreferrer">
-            <FaInstagram className='text-white text-2xl hover:text-pink-500' />
           </a>
           <a href="https://github.com/aa0962" target="_blank" rel="noopener noreferrer">
             <FaGithub className='text-white text-2xl hover:text-gray-500' />
