@@ -1,3 +1,4 @@
+import Device from '@/components/device-stats'
 import Location from '@/components/location-stats'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -137,7 +138,7 @@ const Link = () => {
 
     <CardTitle>Device Info</CardTitle>
 
-    {/* {<DeviceStats stats={stats}/>} */}
+    {<Device stats={stats}/>}
 
   </CardContent>
   ):(
